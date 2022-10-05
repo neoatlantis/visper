@@ -1,0 +1,15 @@
+{
+  "name": "visper",
+  "version": "1.0.0",
+  "description": "Ephermal chatrooms on demand.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "WAMP",
+    "chat"
+  ],
+  "author": "NeoAtlantis",
+  "license": "GPL-3.0"
+}
