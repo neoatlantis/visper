@@ -11,5 +11,9 @@
     "chat"
   ],
   "author": "NeoAtlantis",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nawamp": "^1.0.0"
+  }
 }
