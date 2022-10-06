@@ -1,7 +1,5 @@
 <template>
-    <span>
-    {{ fingerprint_display }}
-    </span>
+    <input class="form-control" type="text" :value="fingerprint_display" style="font-family:monospace" readonly>
 </template>
 
 <script>
