@@ -30,5 +30,4 @@ class Identity extends events.EventEmitter{
 
 
 
-const identity = new Identity();
-export default identity;
+export default new Identity();

@@ -24,17 +24,30 @@
 </div>
 -->
 
-<LoginFrame></LoginFrame>
+<LoginFrame v-if="!logged_in"></LoginFrame>
 
 
 
 </template>
 <script>
 
+import session from "app/session";
+
 import IdentityFingerprint from "sfc/IdentityFingerprint.vue";
 import LoginFrame from "sfc/LoginFrame.vue";
 
 export default {
+
+    data(){ return {
+        logged_in: false,
+    } },
+
+    mounted(){
+        session.on("logged-in", ()=>{
+            this.logged_in = true;
+        });
+    },
+
     components: {
         IdentityFingerprint,
         LoginFrame,

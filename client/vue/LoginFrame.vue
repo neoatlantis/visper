@@ -8,9 +8,15 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <input class="form-control" type="text" style="font-family:monospace" placeholder="e.g. 817.137, 132.373, 932.123, 292.132">
-                    <small class="form-text text-muted">We use a four-element coordinate to locate our very secret meeting point in 4D space.</small>
+                    <div class="input-group">
+                        <input class="form-control" type="text" style="font-family:monospace" v-model="meetpoint" placeholder="e.g. 817.137, 132.373, 932.123, 292.132">
+                        <div class="input-group-append">
+                            <button class="input-group-text" @click="random_pick">Random Pick</button>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">We use a four-element coordinate (at least 24 digits) to locate our very secret meeting point in 4D spacetime.</small>
                 </div>
+                <button type="submit" class="btn btn-success" @click="login" :disabled="!meetpoint_valid">Travel to meetpoint</button>
             </div>
         </div>
     </div>
@@ -18,4 +24,57 @@
 
 </template>
 <script>
+
+import nacl from "tweetnacl";
+import session from "app/session";
+const _ = require("lodash");
+
+export default {
+
+    data(){
+        let meetpoint = "";
+        if(localStorage.getItem("meetpoint")){
+            meetpoint = localStorage.getItem("meetpoint");
+        }
+        return {
+            meetpoint,
+        }
+    },
+
+    computed: {
+        entry_seed: function(){
+            return this.meetpoint.toString().replace(/[^0-9\-]/g, "");
+        },
+
+        meetpoint_valid: function(){
+            return this.entry_seed && this.entry_seed.length >= 24;
+        }
+    },
+
+    methods: {
+        random_pick(){
+            let random_bytes = nacl.randomBytes(32);
+            let eight_numbers = new Uint32Array(random_bytes.buffer);
+            let numbers =  Array.from(eight_numbers);
+            this.meetpoint = [
+                `Lat=${(numbers[0] % 180) - 90}.${numbers[1] % 100000}`,
+                `Lng=${(numbers[2] % 360) - 180}.${numbers[3] % 100000}`,
+                `R=${numbers[4] % 6371}.${numbers[5] % 100000}`,
+                `t=${numbers[6] % 10000}.${numbers[7] % 100000}`,
+            ].join(", ");
+
+            /// #if DEV
+            setTimeout(this.login, 500);
+            /// #endif
+        },
+
+        login(){
+            localStorage.setItem("meetpoint", this.meetpoint);
+            session.login(this.entry_seed);
+        }
+    }
+
+}
+
+
 </script>
