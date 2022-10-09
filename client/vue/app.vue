@@ -3,7 +3,7 @@
 <LoginFrame v-if="!logged_in"></LoginFrame>
 <div v-if="logged_in" class="container-fluid" style="height:100%">
     <div class="row" style="height:100%">
-        <div class="bg-light col-4">
+        <div class="bg-light col-4" style="padding: 1em">
             <IFF></IFF>
         </div>
         <div class="bg-dark col-8">

@@ -1,7 +1,7 @@
 <template>
-<div class="text-white">
+<div class="text-white" style="padding: 0.5em">
 
-    <div v-for="(entry, entry_i) in list">
+    <div v-for="(entry, entry_i) in list" style="padding: 0">
         {{ entry }}
     </div>
 
@@ -12,9 +12,27 @@
 
 export default {
     data(){ return {
-        list: [
-            "test",
-        ]
+        list: 
+            /// #if DEV
+            (()=>{
+                let ret = [];
+                ret.push({
+                    type: "system",
+                    text: "Hello world.",
+                    time: new Date(),
+                });
+                for(let i=0; i<10; i++){
+                    ret.push({
+                        type: "message",
+                        text: "Test message No. " + (i+1),
+                        time: new Date(),
+                    });
+                }
+                return ret;
+            })(),
+            /// #else
+            [],
+            /// #endif
     } },
 
     methods: {
