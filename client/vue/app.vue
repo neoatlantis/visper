@@ -1,31 +1,16 @@
 <template>
 
-
-
-<!--
- <div class="d-flex flex-column flex-shrink-0 p-3 bg-light col-4">
-    <div class="card">
-        <div class="card-header bg-info text-white">
-            Security Monitor
+<LoginFrame v-if="!logged_in"></LoginFrame>
+<div v-if="logged_in" class="container-fluid" style="height:100%">
+    <div class="row" style="height:100%">
+        <div class="bg-light col-4">
+            <IFF></IFF>
         </div>
-        <div class="card-body">
-            <IdentityFingerprint></IdentityFingerprint>
+        <div class="bg-dark col-8">
+            <ChatHistory></ChatHistory>
         </div>
     </div>
-
-
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li>
-        <a href="#" class="nav-link link-dark">
-          Dashboard
-        </a>
-      </li>
-    </ul>
 </div>
--->
-
-<LoginFrame v-if="!logged_in"></LoginFrame>
-
 
 
 </template>
@@ -33,7 +18,8 @@
 
 import session from "app/session";
 
-import IdentityFingerprint from "sfc/IdentityFingerprint.vue";
+import ChatHistory from "sfc/ChatHistory.vue";
+import IFF from "sfc/IFF.vue";
 import LoginFrame from "sfc/LoginFrame.vue";
 
 export default {
@@ -49,8 +35,9 @@ export default {
     },
 
     components: {
-        IdentityFingerprint,
         LoginFrame,
+        IFF,
+        ChatHistory,
     }
 }
 

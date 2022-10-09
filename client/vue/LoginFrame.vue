@@ -36,6 +36,13 @@ export default {
         if(localStorage.getItem("meetpoint")){
             meetpoint = localStorage.getItem("meetpoint");
         }
+        /// #if DEV
+        if(meetpoint){
+            setTimeout(this.login, 100);
+        } else {
+            setTimeout(this.random_pick, 100);
+        }
+        /// #endif
         return {
             meetpoint,
         }
@@ -64,7 +71,7 @@ export default {
             ].join(", ");
 
             /// #if DEV
-            setTimeout(this.login, 500);
+            setTimeout(this.login, 100);
             /// #endif
         },
 
