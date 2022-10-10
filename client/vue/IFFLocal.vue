@@ -16,9 +16,18 @@
     <div style="padding-top: 0.3em">
         <span
             class="badge"
-            :class='{ "badge-danger": transmitting, "badge-secondary": !transmitting }'
-            :style='{ color: !transmitting?"#CCC":undefined }'
+            :class='{ "badge-danger": transmitting, "badge-secondary": !transmitting, "badge-dimmed": !transmitting }'
         >Transmission</span>
+        &nbsp;
+        <span
+            class="badge"
+            :class='{ "badge-success": receiving, "badge-secondary": !receiving, "badge-dimmed": !receiving }'
+        >Reception</span>
+        &nbsp;
+        <span
+            class="badge"
+            :class='{ "badge-warning": interference, "badge-secondary": !interference, "badge-dimmed": !interference }'
+        >Interference</span>
     </div>
 </template>
 <script>
@@ -30,15 +39,16 @@ export default {
     mounted(){
         IFFClass.on("broadcasted", ()=>{
             this.transmitting = true;
-            setTimeout(()=>{ this.transmitting = false }, 300);
+            setTimeout(()=>{ this.transmitting = false }, 400);
         });
     },
 
     data(){ return {
         transmitting: false,
+        receiving: false,
         pwddisplay: "<Not set, click to change>",
+        interference: false,
     } },
-
 
     components: {
         IdentityFingerprint,
