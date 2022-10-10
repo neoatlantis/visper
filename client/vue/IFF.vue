@@ -4,8 +4,7 @@
             IFF: Identification of Friends and Foreigner
         </div>
         <div class="card-body">
-            Your identification:
-            <IdentityFingerprint></IdentityFingerprint>
+            <IFFLocal></IFFLocal>
         </div>
         <div class="card-header bg-secondary text-white">
             Contacts currently in this chat
@@ -28,18 +27,16 @@
 
 </template>
 <script>
-import IdentityFingerprint from "sfc/IdentityFingerprint.vue";
+import IFFLocal    from "sfc/IFFLocal.vue";
 import IFFUserlist from "sfc/IFFUserlist.vue";
+
 export default {
 
     data(){ return {
     } },
 
-    mounted(){
-    },
-
     components: {
-        IdentityFingerprint,
+        IFFLocal,
         IFFUserlist,
     }
 }

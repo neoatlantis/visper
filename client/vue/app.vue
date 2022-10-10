@@ -3,11 +3,12 @@
 <LoginFrame v-if="!logged_in"></LoginFrame>
 <div v-if="logged_in" class="container-fluid" style="height:100%">
     <div class="row" style="height:100%">
-        <div class="bg-light col-4" style="padding: 1em">
+        <div class="bg-light col-3" style="padding: 1em">
             <IFF></IFF>
         </div>
-        <div class="bg-dark col-8">
+        <div class="bg-dark col-9">
             <ChatHistory></ChatHistory>
+            <ChatBox></ChatBox>
         </div>
     </div>
 </div>
@@ -19,8 +20,9 @@
 import session from "app/session";
 
 import ChatHistory from "sfc/ChatHistory.vue";
-import IFF from "sfc/IFF.vue";
-import LoginFrame from "sfc/LoginFrame.vue";
+import ChatBox     from "sfc/ChatBox.vue";
+import IFF         from "sfc/IFF.vue";
+import LoginFrame  from "sfc/LoginFrame.vue";
 
 export default {
 
@@ -38,6 +40,7 @@ export default {
         LoginFrame,
         IFF,
         ChatHistory,
+        ChatBox,
     }
 }
 

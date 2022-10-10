@@ -45,10 +45,11 @@ class Session extends events.EventEmitter{
             this.#room = room;
         }
         this.#socket.emit("join", { room: this.#room });
+    }
 
-        setInterval(()=>{
-            this.#socket.emit("message", { "test": new Date().getTime() });
-        }, 1000);
+
+    broadcast_message(data){
+        this.#socket.emit("message", data);
     }
 
 }

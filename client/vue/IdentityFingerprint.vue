@@ -1,5 +1,5 @@
 <template>
-    <input class="form-control form-control-sm" type="text" :value="fingerprint_display" style="font-family:monospace" readonly>
+    <input id="identity-fp" class="form-control form-control-sm" type="text" :value="fingerprint_display" style="font-family:monospace" readonly>
 </template>
 
 <script>

@@ -71,6 +71,7 @@ export default {
             ].join(", ");
 
             /// #if DEV
+            this.meetpoint = "1234567891234565789123456789123456789123456789";
             setTimeout(this.login, 100);
             /// #endif
         },
