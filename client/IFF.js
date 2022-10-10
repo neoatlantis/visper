@@ -16,6 +16,11 @@ class IFF extends events.EventEmitter {
         super();
 
         setInterval(()=>this.broadcast(), 2000);
+        session.on("iff", (data)=>this.receive(data));
+    }
+
+    receive(data){
+        this.emit("received");
     }
 
     broadcast(){

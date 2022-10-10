@@ -33,6 +33,10 @@ class Session extends events.EventEmitter{
     }
 
     on_message(data){
+        if(data.type == "iff"){
+            this.emit("iff", data);
+            return;
+        }
         console.log("on message", data);
     }
 

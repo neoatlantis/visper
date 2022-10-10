@@ -14,23 +14,15 @@
         </div>
     </div>
     <div style="padding-top: 0.3em">
-        <span
-            class="badge"
-            :class='{ "badge-danger": transmitting, "badge-secondary": !transmitting, "badge-dimmed": !transmitting }'
-        >Transmission</span>
+        <StatusLED ref="led_tr" color="red">Transmission</StatusLED>
         &nbsp;
-        <span
-            class="badge"
-            :class='{ "badge-success": receiving, "badge-secondary": !receiving, "badge-dimmed": !receiving }'
-        >Reception</span>
+        <StatusLED ref="led_rc" color="green">Reception</StatusLED>
         &nbsp;
-        <span
-            class="badge"
-            :class='{ "badge-warning": interference, "badge-secondary": !interference, "badge-dimmed": !interference }'
-        >Interference</span>
+        <StatusLED ref="led_if" color="yellow">Interference</StatusLED>
     </div>
 </template>
 <script>
+import StatusLED           from "sfc/StatusLED.vue";
 import IdentityFingerprint from "sfc/IdentityFingerprint.vue";
 import IFFClass from "app/IFF";
 
@@ -38,20 +30,20 @@ export default {
 
     mounted(){
         IFFClass.on("broadcasted", ()=>{
-            this.transmitting = true;
-            setTimeout(()=>{ this.transmitting = false }, 400);
+            this.$refs["led_tr"].trigger();
+        });
+        IFFClass.on("received", ()=>{
+            this.$refs["led_rc"].trigger();
         });
     },
 
     data(){ return {
-        transmitting: false,
-        receiving: false,
         pwddisplay: "<Not set, click to change>",
-        interference: false,
     } },
 
     components: {
         IdentityFingerprint,
+        StatusLED,
     }
 }
 </script>
