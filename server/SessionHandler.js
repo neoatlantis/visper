@@ -1,10 +1,12 @@
 const _ = require("lodash");
 
 class SessionHandler {
+    #io;
     #socket;
     #room;
 
-    constructor(socket){
+    constructor(io, socket){
+        this.#io = io;
         this.#socket = socket;
         this.#room = null;
 
@@ -67,7 +69,7 @@ class SessionHandler {
         }
         data._sender = this.#socket.id;
         data._time = new Date().getTime();
-        this.#socket.to(this.#room).emit("message", data);
+        this.#io.to(this.#room).emit("message", data);
     }
 
 }

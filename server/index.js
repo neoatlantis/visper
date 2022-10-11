@@ -6,6 +6,6 @@ module.exports = function(server){
     const io = new Server(server);
 
     io.on("connection", (socket)=>{
-        new SessionHandler(socket);
+        new SessionHandler(io, socket);
     });
 }
