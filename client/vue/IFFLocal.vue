@@ -9,7 +9,7 @@
         <div class="form-group row">
             <label for="channel-pwd" class="col-sm-2 col-form-label col-form-label-sm">PWD</label>
             <div class="col-sm-10">
-                <input id="channel-pwd" class="form-control form-control-sm" type="text" :value="pwddisplay" style="font-family:monospace" readonly>
+                <input id="channel-pwd" class="form-control form-control-sm" type="password" v-model="password" placeholder="<Not set, type to set>" style="font-family:monospace">
             </div>
         </div>
     </div>
@@ -24,22 +24,31 @@
 <script>
 import StatusLED           from "sfc/StatusLED.vue";
 import IdentityFingerprint from "sfc/IdentityFingerprint.vue";
-import IFFClass from "app/IFF";
+import IFF from "app/IFF";
 
 export default {
 
     mounted(){
-        IFFClass.on("broadcasted", ()=>{
+        IFF.on("broadcasted", ()=>{
             this.$refs["led_tr"].trigger();
         });
-        IFFClass.on("received", ()=>{
+        IFF.on("received", ()=>{
             this.$refs["led_rc"].trigger();
+        });
+        IFF.on("interference", ()=>{
+            this.$refs["led_if"].trigger();
         });
     },
 
     data(){ return {
-        pwddisplay: "<Not set, click to change>",
+        password: "",
     } },
+
+    watch: {
+        password(){
+            IFF.set_password(this.password);
+        },
+    },
 
     components: {
         IdentityFingerprint,

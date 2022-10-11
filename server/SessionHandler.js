@@ -63,13 +63,11 @@ class SessionHandler {
             this.failure("message.unauthorized");
             return;
         }
-        if(!_.isPlainObject(data)){
-            this.failure("message.invalid");
-            return;
-        }
-        data._sender = this.#socket.id;
-        data._time = new Date().getTime();
-        this.#io.to(this.#room).emit("message", data);
+        this.#io.to(this.#room).emit("message", {
+            sender: this.#socket.id,
+            time: new Date().getTime(),
+            payload: data
+        });
     }
 
 }

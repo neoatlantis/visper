@@ -17,6 +17,11 @@ class IFF extends events.EventEmitter {
 
         setInterval(()=>this.broadcast(), 2000);
         session.on("iff", (data)=>this.receive(data));
+        session.on("interference", ()=>this.emit("interference"));
+    }
+
+    set_password(p){
+        session.set_password(p);
     }
 
     receive(data){

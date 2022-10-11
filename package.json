@@ -14,6 +14,7 @@
   "author": "NeoAtlantis",
   "license": "GPL-3.0",
   "dependencies": {
+    "@ygoe/msgpack": "^1.0.3",
     "autobahn-browser": "^20.9.2",
     "buffer": "^6.0.3",
     "events": "^3.3.0",
