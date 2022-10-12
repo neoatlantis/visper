@@ -1,7 +1,7 @@
 const _ = require("lodash");
 
 const INACTIVITY_START = 1000 * 5;
-const INACTIVITY_TIMEOUT = 1000 * 60;
+const INACTIVITY_TIMEOUT = 1000 * 59;
 
 class ForeignIdentity{
 
@@ -28,7 +28,7 @@ class ForeignIdentity{
     recalculate(){
         const now = new Date().getTime();
         this.inactive_count = now - this.#last_seen.getTime();
-        this.inactive = this.inactive_count >= INACTIVITY_TIMEOUT;
+        this.inactive = this.inactive_count > INACTIVITY_TIMEOUT;
     }
 
     update({ identity, time }){

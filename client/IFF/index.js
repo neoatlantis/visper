@@ -7,7 +7,7 @@
  */
 
 
-import LocalIdentity from "app/crypto/identity";
+import LocalIdentity from "./LocalIdentity";
 import ForeignIdentity from "./ForeignIdentity";
 import session from "app/session";
 

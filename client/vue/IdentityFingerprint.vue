@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import identity from "app/crypto/identity";
+import identity from "app/IFF/LocalIdentity";
 const _ = require("lodash");
 
 export default {
