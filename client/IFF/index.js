@@ -75,7 +75,7 @@ class IFF extends events.EventEmitter {
         // remove inactive foreign identities
         let inactive_keys = [];
         this.#foreign_identities.forEach((identity, identity_key)=>{
-            if(identity.inactive) ret.push(identity_key);
+            if(identity.inactive) inactive_keys.push(identity_key);
         });
         inactive_keys.forEach((k)=>this.#foreign_identities.delete(k));
     }

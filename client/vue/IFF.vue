@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-header bg-primary text-white">
-            IFF: Identification of Friends and Foreigner
+            IFF: Identification Friends and Foreigners
         </div>
         <div class="card-body">
             <IFFLocal></IFFLocal>
