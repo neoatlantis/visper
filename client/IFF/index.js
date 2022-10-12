@@ -6,12 +6,13 @@
  * joined in this chat and their public keys.
  */
 
+
 import LocalIdentity from "app/crypto/identity";
 import ForeignIdentity from "./ForeignIdentity";
 import session from "app/session";
 
 const events = require("events");
-
+const _ = require("lodash");
 
 
 class IFF extends events.EventEmitter {
@@ -26,6 +27,8 @@ class IFF extends events.EventEmitter {
         setInterval(()=>this.broadcast(), 2000);
         session.on("iff", (data)=>this.receive(data));
         session.on("interference", ()=>this.emit("interference"));
+
+        setInterval(()=>this.refresh(), 1000);
     }
 
     set_password(p){
@@ -33,7 +36,7 @@ class IFF extends events.EventEmitter {
     }
 
     receive({ sender, data, time }){
-        this.read_broadcast(data);
+        this.read_broadcast({ sender, data, time });
         this.emit("received");
     }
 
@@ -45,7 +48,8 @@ class IFF extends events.EventEmitter {
         this.emit("broadcasted");
     }
 
-    read_broadcast({ identity }){
+    read_broadcast({ sender, time, data }){
+        const identity = _.get(data, "identity", null);
         if(identity == LocalIdentity.get_public_key()){
             return;
         }
@@ -55,6 +59,7 @@ class IFF extends events.EventEmitter {
         }
         // update identity entry
         this.#foreign_identities.get(identity).update({
+            time,
         });
     }
 
@@ -63,6 +68,16 @@ class IFF extends events.EventEmitter {
         this.#foreign_identities.forEach(
             (identity)=>ret.push(identity.display()));
         return ret;
+    }
+
+
+    refresh(){
+        // remove inactive foreign identities
+        let inactive_keys = [];
+        this.#foreign_identities.forEach((identity, identity_key)=>{
+            if(identity.inactive) ret.push(identity_key);
+        });
+        inactive_keys.forEach((k)=>this.#foreign_identities.delete(k));
     }
 }
 
