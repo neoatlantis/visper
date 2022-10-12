@@ -8,6 +8,7 @@ class Identity extends events.EventEmitter{
 
     #public_key;
     #secret_key;
+    #public_key_serialized;
 
     constructor(){
         super();
@@ -15,14 +16,16 @@ class Identity extends events.EventEmitter{
 
     generate(){
         const { publicKey, secretKey } = nacl.box.keyPair();
-        this.#public_key = publicKey;
         this.#secret_key = secretKey;
+        this.#public_key = publicKey;
+        this.#public_key_serialized = buffer.Buffer.from(
+            this.#public_key).toString("hex");
 
         this.emit("created");
     }
 
     get_public_key(){
-        return buffer.Buffer.from(this.#public_key).toString("hex");
+        return this.#public_key_serialized;
     }
     
 }

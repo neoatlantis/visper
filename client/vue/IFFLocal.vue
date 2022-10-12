@@ -18,7 +18,7 @@
         &nbsp;
         <StatusLED ref="led_rc" color="green">Reception</StatusLED>
         &nbsp;
-        <StatusLED ref="led_if" color="yellow">Interference</StatusLED>
+        <StatusLED ref="led_if" color="yellow" v-tooltip="'Someone in this channel did not get the correct password.'">Interference</StatusLED>
     </div>
 </template>
 <script>

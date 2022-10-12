@@ -16,12 +16,16 @@ class Session extends events.EventEmitter{
 
     constructor(){
         super();
-        this.#socket = io();
+        this.#socket = io("/", {
+            reconnection: true,
+        });
 
         this.set_password("");
         this.#socket.on("success", 
             ({ uri, data })=>this.on_success({ uri, data }));
         this.#socket.on("message", (data)=>this.on_message(data));
+
+        this.#socket.io.on("reconnect", ()=>this.on_reconnect());
 
     }
 
@@ -99,21 +103,30 @@ class Session extends events.EventEmitter{
         let data = this.#decrypt(payload);
         if(data == null){
             // failed decryption
-            this.emit("interference");
+            this.emit("interference", { sender ,time });
             return;
         }
 
         if(data.type == "iff"){
-            this.emit("iff", data);
+            this.emit("iff", { sender, time, data });
             return;
         }
     }
 
-    login(entry_seed){
+    #join_room(entry_seed){
         if(!_.isNil(entry_seed)){
             this.#set_room(entry_seed);
         }
         this.#socket.emit("join", { room: this.#room });
+    }
+
+    on_reconnect(){
+        console.log("reconnected");
+        this.#join_room();
+    }
+
+    login(entry_seed){
+        this.#join_room(entry_seed);
     }
 
 
