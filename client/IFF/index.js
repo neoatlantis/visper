@@ -9,10 +9,13 @@
 
 import LocalIdentity from "./LocalIdentity";
 import ForeignIdentity from "./ForeignIdentity";
+import ForeignIdentityEphermalCert from "./ForeignIdentityEphermalCert";
 import session from "app/session";
 
 const events = require("events");
 const _ = require("lodash");
+
+
 
 
 class IFF extends events.EventEmitter {
@@ -43,23 +46,32 @@ class IFF extends events.EventEmitter {
     broadcast(){
         session.broadcast_message({
             type: "iff",
-            identity: LocalIdentity.get_public_key(),
+            cert: LocalIdentity.get_cert(),
         });
         this.emit("broadcasted");
     }
 
     read_broadcast({ sender, time, data }){
-        const identity = _.get(data, "identity", null);
-        if(identity == LocalIdentity.get_public_key()){
+        const cert = new ForeignIdentityEphermalCert(
+            _.get(data, "cert", null));
+        const identity_hex = cert.get_identity_hex();
+        if(identity_hex == LocalIdentity.get_identity_hex()){
             return;
         }
-        if(!this.#foreign_identities.has(identity)){
+        console.debug("Cert broadcast: RECV", data);
+        if(!cert.verify()){
+            this.emit("interference");
+            return;
+        }
+        console.debug("Remote cert self signature verified."); 
+        if(!this.#foreign_identities.has(identity_hex)){
             this.#foreign_identities.set(
-                identity, new ForeignIdentity(identity));
+                identity_hex, new ForeignIdentity(identity_hex));
         }
         // update identity entry
-        this.#foreign_identities.get(identity).update({
+        this.#foreign_identities.get(identity_hex).update({
             time,
+            cert,
         });
     }
 

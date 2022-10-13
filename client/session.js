@@ -3,7 +3,7 @@ import nacl from "tweetnacl";
 
 const buffer = require("buffer");
 const events = require("events");
-const msgpack = require('@ygoe/msgpack');
+const msgpack = require("msgpack");
 
 
 class Session extends events.EventEmitter{
@@ -24,6 +24,7 @@ class Session extends events.EventEmitter{
         this.#socket.on("success", 
             ({ uri, data })=>this.on_success({ uri, data }));
         this.#socket.on("message", (data)=>this.on_message(data));
+        this.#socket.on("error", console.error);
 
         this.#socket.io.on("reconnect", ()=>this.on_reconnect());
 

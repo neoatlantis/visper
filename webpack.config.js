@@ -21,6 +21,7 @@ module.exports = (env)=>{
                 alias: {
                     app: path.resolve(__dirname, "client"),
                     sfc: path.resolve(__dirname, "client", "vue"),
+                    msgpack: "@ygoe/msgpack",
                 },
             },
             externals: {

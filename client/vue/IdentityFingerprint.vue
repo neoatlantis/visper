@@ -20,7 +20,7 @@ export default {
 
     mounted(){
         identity.on("created", ()=>{
-            this.fingerprint_hex = identity.get_public_key();
+            this.fingerprint_hex = identity.get_identity_hex();
         });
         identity.generate();
     },
