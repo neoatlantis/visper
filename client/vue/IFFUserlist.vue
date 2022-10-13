@@ -8,10 +8,10 @@
         
         <span class="badge badge-danger" v-if="each.inactive_countdown">
             Vanished
-            ({{ Math.round(each.inactive_count / 1000) }})
+            ({{ Math.round(each.inactive_count / 1000) }}s)
         </span>
         <span class="badge badge-success" v-else>
-            Tracking
+            Tracking (Seq. {{ each.sequence }})
         </span>
 
     </li>

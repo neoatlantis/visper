@@ -24,6 +24,7 @@ class LocalIdentityEphermalCert extends events.EventEmitter{
         const cert_payload = msgpack.serialize({
             identity: local_identity.get_identity(),
             ephermal: publicKey,
+            sequence: now,
         });
         const cert_signature = local_identity.get_signed_detached(cert_payload);
         const cert = msgpack.serialize({
