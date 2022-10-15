@@ -20,16 +20,12 @@ class ForeignIdentityEphermalCert extends events.EventEmitter{
         try{
             cert = buffer.Buffer.from(cert, "base64");
             const { payload, signature } = msgpack.deserialize(cert);
-            const { identity, ephermal, sequence } =
-                msgpack.deserialize(payload);
+            const { identity, ephermal } = msgpack.deserialize(payload);
 
             this.#identity = identity;
             this.#ephermal = ephermal;
             this.#signature = signature;
             this.#payload = payload;
-            this.#sequence = sequence;
-
-            if(!_.isInteger(this.#sequence)) throw Error();
         } catch(e){
             console.log(e);
             this.#signature = this.#payload = null;

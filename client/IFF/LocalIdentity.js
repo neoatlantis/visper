@@ -41,10 +41,9 @@ class Identity extends events.EventEmitter{
         return buffer.Buffer.from(this.#public_key).toString("hex");
     }
 
-    get_cert(){
+    async get_cert(){
         return this.#ephermal_cert.update(this);
     }
-    
 }
 
 

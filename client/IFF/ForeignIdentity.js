@@ -1,3 +1,4 @@
+import LocalIdentity from "./LocalIdentity";
 const _ = require("lodash");
 
 const INACTIVITY_START = 1000 * 5;
@@ -42,11 +43,12 @@ class ForeignIdentity{
         // Take the new cert and use it. Returns true if success.
         // TODO verify validity
         if(!cert.verify()) return false; // likely duplicated, safety first?
-        
+
         if(cert.get_sequence() > this.#sequence){
             this.#sequence = cert.get_sequence();
             if(this.#sequence0 === null) this.#sequence0 = this.#sequence;
             this.#ephermal = cert.get_ephermal();
+            this.update_keys();
         }
         return true;
     }
@@ -69,6 +71,14 @@ class ForeignIdentity{
         this.#last_seen = last_seen;
     }
 
+    update_keys(){
+        /*const newkeys = LocalIdentity.pair_with_key(this.#ephermal);
+        console.log(
+            "ForeignIdentity",
+            `new keys for ${this.#identity}:`,
+            newkeys
+        );*/
+    }
 }
 
 export default ForeignIdentity;

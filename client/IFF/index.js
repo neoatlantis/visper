@@ -43,10 +43,10 @@ class IFF extends events.EventEmitter {
         this.emit("received");
     }
 
-    broadcast(){
+    async broadcast(){
         session.broadcast_message({
             type: "iff",
-            cert: LocalIdentity.get_cert(),
+            cert: await LocalIdentity.get_cert(),
         });
         this.emit("broadcasted");
     }
@@ -63,7 +63,7 @@ class IFF extends events.EventEmitter {
             this.emit("interference");
             return;
         }
-        console.debug("Remote cert self signature verified."); 
+        console.debug("Remote cert self signature verified.");
         if(!this.#foreign_identities.has(identity_hex)){
             this.#foreign_identities.set(
                 identity_hex, new ForeignIdentity(identity_hex));

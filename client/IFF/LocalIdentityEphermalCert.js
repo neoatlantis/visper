@@ -1,4 +1,7 @@
 import nacl from "tweetnacl";
+import EphermalKeys from "app/EphermalKeys";
+import TimedMap from "app/lib/TimedMap";
+
 const buffer = require("buffer");
 const _ = require("lodash");
 const events = require("events");
@@ -7,24 +10,23 @@ const msgpack = require("msgpack");
 
 class LocalIdentityEphermalCert extends events.EventEmitter{
 
-    #keys;
+    #certs;
 
     constructor(){
         super();
-        this.#keys = new Map();
+        this.#certs = new TimedMap(30, 3);
     }
 
-    update(local_identity){
-        const now = Math.floor(new Date().getTime() / 30000);
-        if(this.#keys.has(now)){
-            return _.get(this.#keys.get(now), "cert");
-        }
-        const { publicKey, secretKey } = nacl.box.keyPair();
+    async update(local_identity){
+        let current_prerecord = this.#certs.current();
+        if(current_prerecord) return current_prerecord;
+
+        let newest_ephermal_public_key =
+            await EphermalKeys.Local.get_newest_key();
 
         const cert_payload = msgpack.serialize({
             identity: local_identity.get_identity(),
-            ephermal: publicKey,
-            sequence: now,
+            ephermal: newest_ephermal_public_key,
         });
         const cert_signature = local_identity.get_signed_detached(cert_payload);
         const cert = msgpack.serialize({
@@ -32,9 +34,7 @@ class LocalIdentityEphermalCert extends events.EventEmitter{
             signature: cert_signature,
         });
 
-        this.#keys.set(now, {
-            publicKey, secretKey, cert
-        });
+        this.#certs.set(cert);
 
         return buffer.Buffer.from(cert).toString("base64");
     }
