@@ -2,33 +2,44 @@ import EphermalKeyUsage from "app/EphermalKeys/Usage";
 import IFF from "app/IFF";
 import LocalIdentity from "app/IFF/LocalIdentity";
 import session from "app/session";
+import chat_history from "app/ChatHistory";
+
+const events = require("events");
 
 
-class MessagingSender {
+class MessagingSender extends events.EventEmitter {
 
-    #broadcast_chat(data){
+    constructor(){
+        super();
+    }
+
+    async #broadcast_chat(chatdata){
+        const identity = LocalIdentity.get_identity();
+        const identity_hex = LocalIdentity.get_identity_hex();
+
+        chat_history.add({
+            data: chatdata,
+            identity: identity_hex,
+            time: new Date(),
+            is_self: true,
+        });
+
+        let target_identities =
+            IFF.list_foreign_identities().map((e)=>e.identity);
+        let encrypted = await EphermalKeyUsage.encrypt_and_sign(
+            chatdata,
+            target_identities
+        );
         session.broadcast_message({
             type: "chat",
             identity: LocalIdentity.get_identity(),
-            data,
+            data: encrypted,
         });
+        console.log("CHAT/OUTGOING", encrypted);
     }
 
     async text({ text }){
-        let message = {
-            type: "text",
-            text,
-        };
-        let target_identities =
-            IFF.list_foreign_identities().map((e)=>e.identity);
-
-        let encrypted = await EphermalKeyUsage.encrypt_and_sign(
-            message,
-            target_identities
-        );
-
-        console.log("MESSAGING-SEND", encrypted);
-        this.#broadcast_chat(encrypted);
+        return await this.#broadcast_chat({ type: "text", text });
     }
 
 }

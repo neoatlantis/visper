@@ -1,6 +1,8 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const RemoveConsolePlugin = require('remove-console-webpack-plugin')
+
 
 module.exports = (env)=>{
 
@@ -48,6 +50,7 @@ module.exports = (env)=>{
                 new HtmlWebpackPlugin({
                     template: "./client/index.html",
                 }),
+                //new RemoveConsolePlugin(is_dev?[]:['*']),
             ]
         },
     ];

@@ -2,17 +2,17 @@
 <div class="text-white" style="padding: 0.5em; margin:1em 0 1em 0; height:80vh; overflow-x: hidden; overflow-y: scroll">
 
         <div v-for="(entry, entry_i) in list" style="padding: 0">
-            <div v-if="'system' == entry.type" style="text-align:center">
+            <div v-if="'system' == entry.identity" style="text-align:center">
                 <span style="font-weight: bold">SYSTEM:</span>
                 {{ entry.text }}
             </div>
-            <div v-if="'message' == entry.type" style="margin-top: 0.5em">
-                <div :style="{color:entry.is_outgoing?'#99FF99':'#9999FF'}">
-                    {{ entry.is_outgoing ? "Me" : entry.sender }}
+            <div v-if="'text' == entry.data.type" style="margin-top: 0.5em">
+                <div :style="{color:entry.is_self?'#99FF99':'#9999FF'}">
+                    {{ entry.is_self ? "Me" : entry.sender }}
                     <ChatHistoryDateformat :date="entry.time"></ChatHistoryDateformat>
                 </div>
                 <div style="padding-left:1em">
-                {{ entry.text }}
+                {{ entry.data.text }}
                 </div>
             </div>
         </div>
@@ -22,36 +22,34 @@
 <script>
 
 import ChatHistoryDateformat from "./ChatHistoryDateformat.vue";
+import ChatHistory from "app/ChatHistory";
+
 
 export default {
+
+    mounted(){
+
+        ChatHistory.on("message", (e)=>{
+            console.log("--------", e);
+            this.list.push(e)
+        });
+
+    },
+
     data(){ return {
-        list: 
-            /// #if DEV
-            (()=>{
-                let ret = [];
-                ret.push({
-                    type: "system",
-                    text: "Hello world.",
-                    time: new Date(),
-                });
-                for(let i=0; i<100; i++){
-                    ret.push({
-                        type: "message",
-                        is_outgoing: ((i % 3) == 2),
-                        sender: ["Alice", "Bob", "Me"][i % 3],
-                        text: "Test message No. " + (i+1),
-                        time: new Date(),
-                    });
-                }
-                return ret;
-            })(),
-            /// #else
-            [],
-            /// #endif
+        list: [],
+        /*
+        {
+            data: { type: "text", text: "user text" },
+            identity: "HEX...",
+            time:
+            is_self
+        }
+         */
     } },
 
     methods: {
-        
+
     },
 
     components: {

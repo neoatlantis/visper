@@ -5,6 +5,8 @@ import FloatingVue from 'floating-vue'
 import App from "sfc/app.vue";
 
 
-const app = createApp(App)
-.use(FloatingVue)
-.mount("#app");
+setTimeout(()=>{
+    const app = createApp(App)
+    .use(FloatingVue)
+    .mount("#app");
+}, 0);
