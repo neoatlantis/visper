@@ -38,12 +38,16 @@ class ForeignEphermalKeys {
             return;
         }
 
+        // get creation time
+        const creation_time = new_key.getCreationTime();
+
         console.log("new foreign key", new_key.getFingerprint());
         console.log("primary user", user_id);
 
         Keyring.add({
             publicKey: new_key,
             identity:  identity,
+            time: creation_time,
         });
 
 

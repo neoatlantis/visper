@@ -26,8 +26,16 @@
 import IFF from "app/IFF";
 import EphermalKeys from "app/EphermalKeys";
 import messaging from "app/messaging";
+import ChatHistory from "app/ChatHistory";
 
 export default {
+
+    mounted(){
+        ChatHistory.on("sent", ()=>{
+            this.message = "";
+        });
+
+    },
 
     data(){ return {
         message: "",

@@ -22,16 +22,17 @@ class Keyring {
         return ret;
     }
 
-    add({ publicKey, privateKey, identity }){
+    add({ publicKey, privateKey, identity, time }){
         const symbol = Symbol();
         let fingerprint = (()=>{
             if(!_.isNil(publicKey)) return publicKey.getFingerprint();
             return privateKey.getFingerprint();
         })();
         if(this.has_fingerprint(fingerprint)) return;
+        if(_.isNil(time)) time = new Date().getTime();
         this.#keyring.set(symbol, {
             publicKey, privateKey, identity, fingerprint,
-            time: new Date().getTime(),
+            time: new Date(time).getTime(),
         });
     }
 

@@ -26,7 +26,7 @@ class LocalEphermalKeys {
             curve: 'curve25519',
             userIDs: [ { name: local_identity_truncated }],
             format: 'object',
-            keyExpirationTime: constants.EPHERMAL_KEY_LIFE,
+            //keyExpirationTime: constants.EPHERMAL_KEY_LIFE,
         });
 
         Keyring.add({ publicKey, privateKey, identity: local_identity });

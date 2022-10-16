@@ -57,6 +57,10 @@ class EphermalKeyUsage {
                 message: pgpmessage,
                 verificationKeys,
                 //expectSigned: true,
+                date: new Date(
+                    new Date().getTime()
+                     + constants.EPHERMAL_KEY_TIME_TOLERANCE*1000
+                ),
                 decryptionKeys,
                 format: "binary",
             });
