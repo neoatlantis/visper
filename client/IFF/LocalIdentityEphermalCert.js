@@ -36,7 +36,7 @@ class LocalIdentityEphermalCert extends events.EventEmitter{
 
         this.#certs.set(cert);
 
-        return buffer.Buffer.from(cert).toString("base64");
+        return cert;
     }
 
 }

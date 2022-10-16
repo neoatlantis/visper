@@ -5,13 +5,13 @@
     <li class="list-group-item" v-for="each in identities">
         <h5 class="card-title">Unidentified Foreign Officer</h5>
         {{ each.identity }}
-        
+
         <span class="badge badge-danger" v-if="each.inactive_countdown">
             Vanished
             ({{ Math.round(each.inactive_count / 1000) }}s)
         </span>
         <span class="badge badge-success" v-else>
-            Tracking (Seq. {{ each.sequence }})
+            Tracking
         </span>
 
     </li>

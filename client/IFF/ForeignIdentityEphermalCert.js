@@ -7,7 +7,6 @@ const msgpack = require("msgpack");
 
 class ForeignIdentityEphermalCert extends events.EventEmitter{
 
-    #sequence;
     #ephermal;
     #identity;
     #payload;
@@ -18,7 +17,7 @@ class ForeignIdentityEphermalCert extends events.EventEmitter{
         super();
 
         try{
-            cert = buffer.Buffer.from(cert, "base64");
+            cert = buffer.Buffer.from(cert);
             const { payload, signature } = msgpack.deserialize(cert);
             const { identity, ephermal } = msgpack.deserialize(payload);
 
@@ -29,7 +28,7 @@ class ForeignIdentityEphermalCert extends events.EventEmitter{
         } catch(e){
             console.log(e);
             this.#signature = this.#payload = null;
-            this.#identity = this.#ephermal = this.#sequence = null;
+            this.#identity = this.#ephermal = null;
         }
         this.#verified = false;
     }
@@ -65,8 +64,6 @@ class ForeignIdentityEphermalCert extends events.EventEmitter{
             return null;
         }
     }
-
-    get_sequence(){ return this.#sequence }
 
     get_ephermal(){ return this.#ephermal }
 

@@ -42,7 +42,6 @@ class TimedMap{
             if(key < limit) removing_keys.push(key);
         });
         removing_keys.forEach((k)=>this.delete(k));
-        console.debug("removed", removing_keys.length, "entries");
     }
 
 }
