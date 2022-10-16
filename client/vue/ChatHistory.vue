@@ -1,5 +1,5 @@
 <template>
-<div class="text-white" style="padding: 0.5em; margin:1em 0 1em 0; height:80vh; overflow-x: hidden; overflow-y: scroll">
+<div ref="container" class="text-white" style="padding: 0.5em; margin:1em 0 1em 0; height:80vh; overflow-x: hidden; overflow-y: scroll">
 
         <div v-for="(entry, entry_i) in list" style="padding: 0">
             <div v-if="'system' == entry.identity" style="text-align:center">
@@ -31,12 +31,28 @@ export default {
 
         ChatHistory.on("message", (e)=>{
             this.list.push(e)
+            setTimeout(()=>this.scroll_to_bottom(), 1);
         });
 
     },
 
     data(){ return {
+        /// #if DEV
+        list: (()=>{
+            let ret = [];
+            for(let i=0; i<1000; i++){
+                ret.push({
+                    data: { type: "text", text: "user text " + i},
+                    identity: "010102032932895139258139205892158120",
+                    time: new Date(),
+                    is_self: true,
+                })
+            }
+            return ret;
+        })(),
+        /// #else
         list: [],
+        /// #endif
         /*
         {
             data: { type: "text", text: "user text" },
@@ -48,6 +64,11 @@ export default {
     } },
 
     methods: {
+
+        scroll_to_bottom(){
+            const el = this.$refs["container"];
+            el.scrollTop = el.scrollHeight + 0xFFFFFF;
+        },
 
     },
 
