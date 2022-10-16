@@ -21,7 +21,7 @@ class Session extends events.EventEmitter{
         });
 
         this.set_password("");
-        this.#socket.on("success", 
+        this.#socket.on("success",
             ({ uri, data })=>this.on_success({ uri, data }));
         this.#socket.on("message", (data)=>this.on_message(data));
         this.#socket.on("error", console.error);
@@ -101,7 +101,11 @@ class Session extends events.EventEmitter{
 
     on_message(server_data){
         let { sender, time, payload } = server_data;
+        // ignore echoed back
+        if(sender == this.#socket.id) return;
+
         let data = this.#decrypt(payload);
+
         if(data == null){
             // failed decryption
             this.emit("interference", { sender ,time });
@@ -110,6 +114,11 @@ class Session extends events.EventEmitter{
 
         if(data.type == "iff"){
             this.emit("iff", { sender, time, data });
+            return;
+        }
+
+        if(data.type == "chat"){
+            this.emit("chat", { sender, time, data });
             return;
         }
     }

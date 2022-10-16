@@ -35,28 +35,38 @@ class EphermalKeyUsage {
         return encrypted;
     }
 
+    async #verify_signatures(signatures){
+        let tasks = signatures.map((each)=>each.verified);
+        let results = await Promise.all(tasks);
+        return results.indexOf(false) < 0;
+    }
+
     async decrypt_and_verify(message, foreign_identity){
-        let verificationkeys = Keyring.get_public_keys_of(foreign_identity);
+        let verificationKeys = Keyring.get_public_keys_of(foreign_identity);
         if(verificationKeys.length < 1){
             console.warning(
                 "Failed decrypting incoming message: expected signed.");
             return null;
         }
-
         let decryptionKeys = Keyring.get_private_keys_of(
             LocalIdentity.get_identity_hex()
         );
+        let pgpmessage = await openpgp.readMessage({ binaryMessage: message });
         try{
-            let message = await openpgp.decrypt({
-                message: await openpgp.readMessage({
-                    binaryMessage: message,
-                }),
+            let { data: decrypted, signatures } = await openpgp.decrypt({
+                message: pgpmessage,
                 verificationKeys,
-                expectSigned: true,
+                //expectSigned: true,
                 decryptionKeys,
                 format: "binary",
             });
-            return msgpack.deserialize(message);
+            let signature_verification =
+                await this.#verify_signatures(signatures);
+            if(!signature_verification){
+                console.warn("decryption failed: bad signature");
+                return null;
+            }
+            return msgpack.deserialize(decrypted);
         } catch(e){
             console.error("Failed decrypting message", e);
             return null;

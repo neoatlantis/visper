@@ -25,7 +25,7 @@
 
 import IFF from "app/IFF";
 import EphermalKeys from "app/EphermalKeys";
-import MessagingSender from "app/Messaging/Sender";
+import messaging from "app/messaging";
 
 export default {
 
@@ -44,7 +44,7 @@ export default {
 
     methods: {
         send_message(){
-            MessagingSender.text({ text: this.message });
+            messaging.Sender.text({ text: this.message });
         }
     }
 
