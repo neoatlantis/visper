@@ -14,10 +14,23 @@ class Keyring {
         );
     }
 
+    has_fingerprint(_fingerprint){
+        let ret = false;
+        this.#keyring.forEach(({ fingerprint })=>{
+            if(!ret && _fingerprint == fingerprint) ret = true;
+        });
+        return ret;
+    }
+
     add({ publicKey, privateKey, identity }){
         const symbol = Symbol();
+        let fingerprint = (()=>{
+            if(!_.isNil(publicKey)) return publicKey.getFingerprint();
+            return privateKey.getFingerprint();
+        })();
+        if(this.has_fingerprint(fingerprint)) return;
         this.#keyring.set(symbol, {
-            publicKey, privateKey, identity,
+            publicKey, privateKey, identity, fingerprint,
             time: new Date().getTime(),
         });
     }
@@ -70,7 +83,7 @@ class Keyring {
             (e)=>e.time
         );
         ret = _.last(_.compact(ret));
-        return _.get(ret, "privateKey", null);
+        return _.get(ret, "publicKey", null);
     }
 
     get_latest_private_key_of(_identity){
@@ -80,7 +93,7 @@ class Keyring {
             (e)=>e.time
         );
         ret = _.last(_.compact(ret));
-        return _.get(ret, "publicKey", null);
+        return _.get(ret, "privateKey", null);
     }
 
 

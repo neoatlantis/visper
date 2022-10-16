@@ -20,14 +20,16 @@ class EphermalKeyUsage {
                 return target_identities.indexOf(identity) >= 0
             })
             .map((key)=>key.publicKey);
-        let signingKey = Keyring.get_latest_private_key_of(
+        let signingKeys = Keyring.get_latest_private_key_of(
             LocalIdentity.get_identity_hex()
         );
+
+        console.log("params", encryptionKeys, signingKeys);
 
         let encrypted = await openpgp.encrypt({
             message,
             encryptionKeys,
-            signingKey,
+            signingKeys,
             format: "binary",
         });
         return encrypted;
