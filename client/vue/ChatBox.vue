@@ -8,6 +8,7 @@
                 background-color: #FFFFFF00; border: none; border-radius: 0.5em;
             "
                 v-model="message"
+                @keypress="on_chatbox_keypress"
             ></textarea>
         </div>
         <div class="col col-2">
@@ -53,7 +54,14 @@ export default {
     methods: {
         send_message(){
             messaging.Sender.text({ text: this.message });
-        }
+        },
+
+        on_chatbox_keypress(e){
+            if(e.shiftKey && e.key == "Enter"){
+                this.send_message();
+                e.preventDefault();
+            }
+        },
     }
 
 
