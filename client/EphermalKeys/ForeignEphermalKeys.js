@@ -43,10 +43,6 @@ class ForeignEphermalKeys {
         })
     }
 
-    async encrypt_and_sign(message, target_identities){
-
-    }
-
 }
 
 export default new ForeignEphermalKeys();
