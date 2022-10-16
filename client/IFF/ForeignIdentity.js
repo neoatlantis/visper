@@ -1,4 +1,6 @@
 import LocalIdentity from "./LocalIdentity";
+import ForeignEphermalKeys from "app/EphermalKeys/ForeignEphermalKeys";
+
 const _ = require("lodash");
 
 const INACTIVITY_START = 1000 * 5;
@@ -7,12 +9,10 @@ const INACTIVITY_TIMEOUT = 1000 * 59;
 class ForeignIdentity{
 
     #identity;
-    #ephermal;
     #last_seen;
 
     constructor(identity){
         this.#identity = identity;
-        this.#ephermal = null;
         this.#last_seen = new Date();
         this.inactive_count = 0;
         this.inactive = false;
@@ -39,7 +39,11 @@ class ForeignIdentity{
         time
     }){
         if(!cert.verify()) return false; // likely duplicated, safety first?
-        this.#ephermal = cert.get_ephermal();
+        ForeignEphermalKeys.register_new_key(
+            this.#identity,
+            cert.get_ephermal()
+        );
+
         const now = new Date().getTime();
         const last_seen = new Date(
             _.min([ // no later than system time

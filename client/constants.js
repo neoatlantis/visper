@@ -1,0 +1,4 @@
+export default {
+    EPHERMAL_KEY_LIFE: 300,
+    EPHERMAL_KEY_ROTATION_PERIOD: 30,
+}

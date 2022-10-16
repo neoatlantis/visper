@@ -1,3 +1,4 @@
-import Local from "./LocalEphermalKeys";
+import Local   from "./LocalEphermalKeys";
+import Foreign from "./ForeignEphermalKeys";
 
-export default { Local };
+export default { Foreign, Local };
