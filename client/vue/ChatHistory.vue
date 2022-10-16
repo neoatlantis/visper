@@ -8,7 +8,7 @@
             </div>
             <div v-if="'text' == entry.data.type" style="margin-top: 0.5em">
                 <div :style="{color:entry.is_self?'#99FF99':'#9999FF'}">
-                    {{ entry.is_self ? "Me" : entry.sender }}
+                    {{ entry.is_self ? "Me" : entry.identity.slice(0,16) + "..." + entry.identity.slice(-16) }}
                     <ChatHistoryDateformat :date="entry.time"></ChatHistoryDateformat>
                 </div>
                 <div style="padding-left:1em">
@@ -30,7 +30,6 @@ export default {
     mounted(){
 
         ChatHistory.on("message", (e)=>{
-            console.log("--------", e);
             this.list.push(e)
         });
 
