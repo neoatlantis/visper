@@ -16,7 +16,7 @@ class EphermalKeyUsage {
         });
 
         let encryptionKeys = Keyring.pick_all_public_keys();
-        let signingKeys = Keyring.get_private_keys();
+        let signingKeys = Keyring.pick_private_key();
 
         console.log("params", encryptionKeys, signingKeys);
 

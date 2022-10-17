@@ -57,7 +57,11 @@ class KeyStack {
             }
             collection.push({ key, time_remaining });
         });
-        return _.last(_.sortBy(collection, (e)=>e.time_remaining));
+        return _.get(
+            _.last(_.sortBy(collection, (e)=>e.time_remaining)),
+            "key",
+            null
+        );
     }
 
     size(){
