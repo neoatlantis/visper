@@ -15,14 +15,8 @@ class EphermalKeyUsage {
             binary: msgpack.serialize(message),
         });
 
-        let encryptionKeys = Keyring
-            .filter(({ identity })=>{
-                return target_identities.indexOf(identity) >= 0
-            })
-            .map((key)=>key.publicKey);
-        let signingKeys = Keyring.get_latest_private_key_of(
-            LocalIdentity.get_identity_hex()
-        );
+        let encryptionKeys = Keyring.pick_all_public_keys();
+        let signingKeys = Keyring.get_private_keys();
 
         console.log("params", encryptionKeys, signingKeys);
 
@@ -48,9 +42,7 @@ class EphermalKeyUsage {
                 "Failed decrypting incoming message: expected signed.");
             return null;
         }
-        let decryptionKeys = Keyring.get_private_keys_of(
-            LocalIdentity.get_identity_hex()
-        );
+        let decryptionKeys = Keyring.get_private_keys();
         let pgpmessage = await openpgp.readMessage({ binaryMessage: message });
         try{
             let { data: decrypted, signatures } = await openpgp.decrypt({

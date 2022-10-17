@@ -120,13 +120,9 @@ class Keyring {
         this.#public_keys.delete(identity);
     }
 
-    /*filter(cond){
-        let ret = [];
-        this.#keyring.forEach((value)=>{
-            if(cond(value)) ret.push(value);
-        });
-        return ret;
-    }*/
+    get_identities(){
+        return [...this.#public_keys.keys()];
+    }
 
     get_public_keys_of(identity){
         this.purge();
@@ -145,6 +141,12 @@ class Keyring {
         let ks = this.#public_keys.get(identity);
         if(!ks) return null;
         return ks.pick();
+    }
+
+    pick_all_public_keys(){
+        return this
+            .get_identities()
+            .map((identity)=>this.pick_public_key_of(identity));
     }
 
     pick_private_key(){
