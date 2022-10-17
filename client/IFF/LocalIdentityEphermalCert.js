@@ -21,12 +21,10 @@ class LocalIdentityEphermalCert extends events.EventEmitter{
         let current_prerecord = this.#certs.current();
         if(current_prerecord) return current_prerecord;
 
-        let newest_ephermal_public_key =
-            await EphermalKeys.Local.get_latest_key();
-
         const cert_payload = msgpack.serialize({
             identity: local_identity.get_identity(),
-            ephermal: newest_ephermal_public_key,
+            ephermal: await EphermalKeys.Local.get_current_public_key(),
+            ephermal_next: await EphermalKeys.Local.get_next_public_key(),
         });
         const cert_signature = local_identity.get_signed_detached(cert_payload);
         const cert = msgpack.serialize({

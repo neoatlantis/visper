@@ -8,6 +8,7 @@ const msgpack = require("msgpack");
 class ForeignIdentityEphermalCert extends events.EventEmitter{
 
     #ephermal;
+    #ephermal_next;
     #identity;
     #payload;
     #signature;
@@ -19,10 +20,12 @@ class ForeignIdentityEphermalCert extends events.EventEmitter{
         try{
             cert = buffer.Buffer.from(cert);
             const { payload, signature } = msgpack.deserialize(cert);
-            const { identity, ephermal } = msgpack.deserialize(payload);
+            const { identity, ephermal, ephermal_next } =
+                msgpack.deserialize(payload);
 
             this.#identity = identity;
             this.#ephermal = ephermal;
+            this.#ephermal_next = ephermal_next;
             this.#signature = signature;
             this.#payload = payload;
         } catch(e){
@@ -66,6 +69,7 @@ class ForeignIdentityEphermalCert extends events.EventEmitter{
     }
 
     get_ephermal(){ return this.#ephermal }
+    get_ephermal_next(){ return this.#ephermal_next }
 
 }
 

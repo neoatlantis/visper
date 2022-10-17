@@ -43,6 +43,10 @@ class ForeignIdentity{
             this.#identity,
             cert.get_ephermal()
         );
+        ForeignEphermalKeys.register_new_key(
+            this.#identity,
+            cert.get_ephermal_next()
+        );
 
         const now = new Date().getTime();
         const last_seen = new Date(

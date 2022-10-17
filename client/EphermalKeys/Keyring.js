@@ -2,99 +2,158 @@ import constants from "app/constants";
 const _  = require("lodash");
 
 
+class KeyStack {
+
+    #keys = [];
+    constructor(){
+
+    }
+
+    add(key){
+        this.#keys.push(key);
+        this.rotate();
+    }
+
+    rotate(){
+        const now = new Date().getTime();
+        const limit_future = now + 2 * constants.EPHERMAL_KEY_ROTATION_PERIOD * 1000;
+        const limit_past   = now - 2 * constants.EPHERMAL_KEY_ROTATION_PERIOD * 1000;
+        this.#keys = _.uniqBy(this.#keys, (key)=>key.getFingerprint());
+        _.remove(this.#keys, (key)=>{
+            let t = key.getCreationTime().getTime();
+            return t > limit_future || t < limit_past;
+        });
+        this.#keys = _.sortBy(
+            this.#keys,
+            (key)=>key.getCreationTime().getTime()
+        ).slice(0, 5);
+    }
+
+    all(){
+        return this.#keys;
+    }
+
+    latest(){
+        this.rotate();
+        return _.maxBy(this.#keys, (key)=>key.getCreationTime().getTime());
+    }
+
+    pick(){
+        this.rotate();
+        // Returns a most suitable key for current time
+        // Algorithm: max remaining time of all keys in current key period.
+        let collection = [];
+        let now = new Date().getTime();
+        this.#keys.forEach((key)=>{
+            let ctime = key.getCreationTime().getTime();
+            let time_remaining = now - ctime;
+            if(time_remaining > constants.EPHERMAL_KEY_ROTATION_PERIOD * 1000){
+                // too new
+                return;
+            }
+            if(time_remaining < 0){
+                // too old
+                return;
+            }
+            collection.push({ key, time_remaining });
+        });
+        return _.last(_.sortBy(collection, (e)=>e.time_remaining));
+    }
+
+    size(){
+        return _.size(this.#keys);
+    }
+
+}
+
+
+
+
+
+
+
 class Keyring {
 
-    #keyring;
+    #public_keys;
+    #private_keys;
 
     constructor(){
-        this.#keyring = new Map();
+        this.#public_keys = new Map();  // identity -> key
+        this.#private_keys = new KeyStack();
+
         setInterval(
             ()=>this.purge(),
             constants.EPHERMAL_KEY_ROTATION_PERIOD * 500
         );
     }
 
-    has_fingerprint(_fingerprint){
-        let ret = false;
-        this.#keyring.forEach(({ fingerprint })=>{
-            if(!ret && _fingerprint == fingerprint) ret = true;
-        });
-        return ret;
+    add_public_key({ publicKey, identity }){
+        if(!this.#public_keys.has(identity)){
+            this.#public_keys.set(identity, new KeyStack());
+        }
+        this.#public_keys.get(identity).add(publicKey);
     }
 
-    add({ publicKey, privateKey, identity, time }){
-        const symbol = Symbol();
-        let fingerprint = (()=>{
-            if(!_.isNil(publicKey)) return publicKey.getFingerprint();
-            return privateKey.getFingerprint();
-        })();
-        if(this.has_fingerprint(fingerprint)) return;
-        if(_.isNil(time)) time = new Date().getTime();
-        this.#keyring.set(symbol, {
-            publicKey, privateKey, identity, fingerprint,
-            time: new Date(time).getTime(),
-        });
+    add_private_key({ privateKey }){
+        this.#private_keys.add(privateKey);
+    }
+
+
+    add({ publicKey, privateKey, identity }){
+        if(_.isNil(privateKey)){
+            return this.add_public_key({ publicKey, identity });
+        }
+        this.add_private_key({ privateKey });
     }
 
     purge(){
-        let limit = new Date().getTime() - constants.EPHERMAL_KEY_LIFE * 1000;
-        let removing_keys = [];
-        this.#keyring.forEach((record, key)=>{
-            if(record.time < limit) removing_keys.push(key);
+        let empty_identities = [];
+        this.#public_keys.forEach((keystack, identity)=>{
+            keystack.rotate();
+            if(keystack.size() < 1) empty_identities.push(identity);
         });
-        removing_keys.forEach((key)=>this.#keyring.delete(key));
+        this.#private_keys.rotate();
+        empty_identities.forEach((e)=>this.#public_keys.delete(e));
     }
 
     purge_identity(identity){
-        let removing_keys = [];
-        this.#keyring.forEach((record, key)=>{
-            if(record.identity === identity) removing_keys.push(key);
-        });
-        removing_keys.forEach((key)=>this.#keyring.delete(key));
+        this.#public_keys.delete(identity);
     }
 
-    filter(cond){
+    /*filter(cond){
         let ret = [];
         this.#keyring.forEach((value)=>{
             if(cond(value)) ret.push(value);
         });
         return ret;
+    }*/
+
+    get_public_keys_of(identity){
+        this.purge();
+        let ks = this.#public_keys.get(identity);
+        if(!ks) return [];
+        return ks.all();
     }
 
-    get_public_keys_of(_identity){
+    get_private_keys(){
         this.purge();
-        return _.compact(
-            this.filter(({ identity })=>identity == _identity)
-            .map((each)=>each.publicKey)
-        );
+        return this.#private_keys.all();
     }
 
-    get_private_keys_of(_identity){
+    pick_public_key_of(identity){
         this.purge();
-        return _.compact(
-            this.filter(({ identity })=>identity == _identity)
-            .map((each)=>each.privateKey)
-        );
+        let ks = this.#public_keys.get(identity);
+        if(!ks) return null;
+        return ks.pick();
     }
 
-    get_latest_public_key_of(_identity){
+    pick_private_key(){
         this.purge();
-        let ret = _.sortBy(
-            this.filter(({ identity })=>identity == _identity),
-            (e)=>e.time
-        );
-        ret = _.last(_.compact(ret));
-        return _.get(ret, "publicKey", null);
+        return this.#private_keys.pick();
     }
 
-    get_latest_private_key_of(_identity){
-        this.purge();
-        let ret = _.sortBy(
-            this.filter(({ identity })=>identity == _identity),
-            (e)=>e.time
-        );
-        ret = _.last(_.compact(ret));
-        return _.get(ret, "privateKey", null);
+    get_latest_private_key(){
+        return this.#private_keys.latest();
     }
 
 

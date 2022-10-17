@@ -6,19 +6,40 @@ import constants from "app/constants";
 const _ = require("lodash");
 
 
+
+const key_period = constants.EPHERMAL_KEY_ROTATION_PERIOD * 1000;
+
+
 class LocalEphermalKeys {
 
     constructor(){}
 
-    async get_latest_key(){
-        function serialize_key(key){
-            return key.write();
-        }
+    current_period(){
+        return Math.floor(new Date().getTime() / key_period);
+    }
 
+    period_start(p){
+        return p * key_period;
+    }
+
+    async #get_private_key_for_period(period){
+        const starttime = this.period_start(period);
+        const all_private_keys = Keyring.get_private_keys();
+        let matching_keys = [];
+        all_private_keys.forEach((private_key)=>{
+            let ctime = private_key.getCreationTime().getTime();
+            if(ctime <= starttime && starttime < ctime+key_period){
+                matching_keys.push(private_key);
+            }
+        });
+        if(_.size(matching_keys) > 0) return _.first(matching_keys);
+
+        let { publicKey, privateKey } = await this.#create_key(starttime);
+        return privateKey;
+    }
+
+    async #create_key(starttime){
         let local_identity = LocalIdentity.get_identity_hex();
-        let latest_key = Keyring.get_latest_public_key_of(local_identity);
-        if(!_.isNil(latest_key)) return serialize_key(latest_key);
-
         const local_identity_truncated = local_identity.slice(0, 32);
 
         const { privateKey, publicKey } = await openpgp.generateKey({
@@ -26,11 +47,23 @@ class LocalEphermalKeys {
             curve: 'curve25519',
             userIDs: [ { name: local_identity_truncated }],
             format: 'object',
-            //keyExpirationTime: constants.EPHERMAL_KEY_LIFE,
+            keyExpirationTime: constants.EPHERMAL_KEY_LIFE,
+            date: new Date(starttime),
         });
 
         Keyring.add({ publicKey, privateKey, identity: local_identity });
-        return serialize_key(publicKey);
+        return { publicKey, privateKey };
+    }
+
+    async get_current_public_key(){
+        let pkey = await this.#get_private_key_for_period(this.current_period());
+        return pkey.toPublic().write();
+    }
+
+    async get_next_public_key(){
+        let pkey = await this.#get_private_key_for_period(
+            this.current_period() + 1);
+        return pkey.toPublic().write();
     }
 }
 
