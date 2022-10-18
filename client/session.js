@@ -79,6 +79,7 @@ class Session extends events.EventEmitter{
 
     #set_room(room_seed){
         this.#room_seed = room_seed;
+        window.location.hash = room_seed;
         this.#room = buffer.Buffer.from(
             nacl.hash(buffer.Buffer.from(room_seed, "ascii"))
         ).toString("hex");
