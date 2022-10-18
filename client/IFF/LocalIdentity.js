@@ -42,6 +42,9 @@ class Identity extends events.EventEmitter{
     }
 
     async get_cert(){
+        if(!this.#ephermal_cert){
+            throw Error("Local identity not initialized");
+        }
         return this.#ephermal_cert.update(this);
     }
 }

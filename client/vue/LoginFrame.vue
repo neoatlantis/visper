@@ -4,18 +4,26 @@
     <div class="col-6">
         <div class="card">
             <div class="card-header bg-success text-white">
-                Meet Point Coordinate
+                Join a chat
             </div>
             <div class="card-body">
                 <div class="form-group">
+                    <label for="input-meetpoint">Meetpoint coordinate:</label>
                     <div class="input-group">
-                        <input class="form-control" type="text" style="font-family:monospace" v-model="meetpoint" placeholder="e.g. 817.137, 132.373, 932.123, 292.132">
+                        <input id="input-meetpoint" class="form-control" type="text" style="font-family:monospace" v-model="meetpoint" placeholder="e.g. 817.137, 132.373, 932.123, 292.132">
                         <div class="input-group-append">
                             <button class="input-group-text" @click="random_pick">Random Pick</button>
                         </div>
                     </div>
                     <small class="form-text text-muted">We use a four-element coordinate (at least 24 digits) to locate our very secret meeting point in 4D spacetime.</small>
                 </div>
+
+                <div class="form-group">
+                    <label for="input-server">Server:</label>
+                    <input id="input-server" class="form-control" type="text" style="font-family:monospace" v-model="server" required>
+                    <small class="form-text text-muted">Don't change if you don't know why. But you can choose to join another server rather than this and chat with more people.</small>
+                </div>
+
                 <button type="submit" class="btn btn-success" @click="login" :disabled="!meetpoint_valid">Travel to meetpoint</button>
             </div>
         </div>
@@ -38,13 +46,14 @@ export default {
         }
         /// #if DEV
         if(meetpoint){
-            setTimeout(this.login, 100);
+            //setTimeout(this.login, 100);
         } else {
             setTimeout(this.random_pick, 100);
         }
         /// #endif
         return {
             meetpoint,
+            server: "/",
         }
     },
 
@@ -72,12 +81,13 @@ export default {
 
             /// #if DEV
             this.meetpoint = "1234567891234565789123456789123456789123456789";
-            setTimeout(this.login, 100);
+            //setTimeout(this.login, 100);
             /// #endif
         },
 
         login(){
             localStorage.setItem("meetpoint", this.meetpoint);
+            session.start({ server: this.server });
             session.login(this.entry_seed);
         }
     }

@@ -16,7 +16,10 @@ class Session extends events.EventEmitter{
 
     constructor(){
         super();
-        this.#socket = io("/", {
+    }
+
+    start({ server="/" }){
+        this.#socket = io(server, {
             reconnection: true,
         });
 
@@ -25,9 +28,7 @@ class Session extends events.EventEmitter{
             ({ uri, data })=>this.on_success({ uri, data }));
         this.#socket.on("message", (data)=>this.on_message(data));
         this.#socket.on("error", console.error);
-
         this.#socket.io.on("reconnect", ()=>this.on_reconnect());
-
     }
 
     #encrypt(data){

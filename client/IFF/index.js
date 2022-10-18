@@ -44,11 +44,15 @@ class IFF extends events.EventEmitter {
     }
 
     async broadcast(){
-        session.broadcast_message({
-            type: "iff",
-            cert: await LocalIdentity.get_cert(),
-        });
-        this.emit("broadcasted");
+        try{
+            session.broadcast_message({
+                type: "iff",
+                cert: await LocalIdentity.get_cert(),
+            });
+            this.emit("broadcasted");
+        } catch(e){
+            return;
+        }
     }
 
     read_broadcast({ sender, time, data }){
