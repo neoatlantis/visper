@@ -69,7 +69,7 @@ export default {
         }
         /// #if DEV
         if(meetpoint){
-            //setTimeout(this.login, 100);
+            setTimeout(this.login, 100);
         } else {
             setTimeout(this.random_pick, 100);
         }
@@ -104,7 +104,7 @@ export default {
 
             /// #if DEV
             this.meetpoint = "1234567891234565789123456789123456789123456789";
-            //setTimeout(this.login, 100);
+            setTimeout(this.login, 100);
             /// #endif
         },
 

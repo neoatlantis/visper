@@ -1,13 +1,24 @@
+<i18n>{
+    en: {
+        IFF_TITLE: "IFF: Identification Friends and Foreigners",
+        RADAR_TITLE: "Four-dimensional Space Radar",
+    },
+
+    zh: {
+        IFF_TITLE: "IFF: 好友及陌生人识别系统",
+        RADAR_TITLE: "四维空间雷达",
+    }
+}</i18n>
 <template>
     <div class="card">
         <div class="card-header bg-primary text-white">
-            IFF: Identification Friends and Foreigners
+            {{ $t("IFF_TITLE") }}
         </div>
         <div class="card-body">
             <IFFLocal></IFFLocal>
         </div>
         <div class="card-header bg-secondary text-white">
-            Contacts currently in this chat
+            {{ $t("RADAR_TITLE") }}
         </div>
         <div class="card-body">
             Your chat messages will be sent only to trusted members. Check

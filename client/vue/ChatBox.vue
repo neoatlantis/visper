@@ -1,3 +1,14 @@
+<i18n>{
+
+    en: {
+        SEND_MESSAGE: "Send Message",
+    },
+
+    zh: {
+        SEND_MESSAGE: "发送消息",
+    }
+
+}</i18n>
 <template>
 
 <div style="height:18vh; border-radius: 0.5em; padding: 0.5em;" class="bg-light">
@@ -16,7 +27,7 @@
                 class="btn btn-primary" style="width:100%"
                 :disabled="!send_allowed"
                 @click="send_message"
-            >Send Message</button>
+            >{{ $t("SEND_MESSAGE") }}</button>
         </div>
     </div>
 </div>

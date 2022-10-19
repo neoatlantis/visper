@@ -1,3 +1,16 @@
+<i18n>{
+    en: {
+        TRANSMISSION: "TX",
+        RECEPTION: "RX",
+        INTERFERENCE: "Interference",
+    },
+
+    zh: {
+        TRANSMISSION: "发送",
+        RECEPTION: "接收",
+        INTERFERENCE: "干扰",
+    }
+}</i18n>
 <template>
     <div>
         <div class="form-group row">
@@ -14,11 +27,11 @@
         </div>
     </div>
     <div style="padding-top: 0.3em">
-        <StatusLED ref="led_tr" color="red">Transmission</StatusLED>
+        <StatusLED ref="led_tr" color="red">{{ $t("TRANSMISSION") }}</StatusLED>
         &nbsp;
-        <StatusLED ref="led_rc" color="green">Reception</StatusLED>
+        <StatusLED ref="led_rc" color="green">{{ $t("RECEPTION") }}</StatusLED>
         &nbsp;
-        <StatusLED ref="led_if" color="yellow" v-tooltip="'Someone in this channel did not get the correct password.'">Interference</StatusLED>
+        <StatusLED ref="led_if" color="yellow" v-tooltip="'Someone in this channel did not get the correct password.'">{{ $t("INTERFERENCE") }}</StatusLED>
     </div>
 </template>
 <script>

@@ -1,17 +1,30 @@
+<i18n>{
+    en: {
+        UFO: "Unidentified Foreign Officer",
+        TRACKING: "Tracking",
+        VANISHED: "Vanished",
+    },
+
+    zh: {
+        UFO: "不明UFO",
+        TRACKING: "正在跟踪",
+        VANISHED: "消失",
+    }
+}</i18n>
 <template>
 
 <ul class="list-group">
 
     <li class="list-group-item" v-for="each in identities">
-        <h5 class="card-title">Unidentified Foreign Officer</h5>
+        <h5 class="card-title">{{ $t("UFO") }}</h5>
         {{ each.identity }}
 
         <span class="badge badge-danger" v-if="each.inactive_countdown">
-            Vanished
+            {{ $t("VANISHED") }}
             ({{ Math.round(each.inactive_count / 1000) }}s)
         </span>
         <span class="badge badge-success" v-else>
-            Tracking
+            {{ $t("TRACKING") }}
         </span>
 
     </li>
