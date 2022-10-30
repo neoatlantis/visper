@@ -37,7 +37,7 @@ export default {
     },
 
     data(){ return {
-        /// #if DEV
+        /// #if false && DEV
         list: (()=>{
             let ret = [];
             for(let i=0; i<1000; i++){

@@ -3,12 +3,14 @@
         TRANSMISSION: "TX",
         RECEPTION: "RX",
         INTERFERENCE: "Interference",
+        TRANSPONDER_SETTINGS: "Transponder Settings...",
     },
 
     zh: {
         TRANSMISSION: "发送",
         RECEPTION: "接收",
         INTERFERENCE: "干扰",
+        TRANSPONDER_SETTINGS: "应答机设定...",
     }
 }</i18n>
 <template>
@@ -32,6 +34,9 @@
         <StatusLED ref="led_rc" color="green">{{ $t("RECEPTION") }}</StatusLED>
         &nbsp;
         <StatusLED ref="led_if" color="yellow" v-tooltip="'Someone in this channel did not get the correct password.'">{{ $t("INTERFERENCE") }}</StatusLED>
+        <div class="float-right">
+            <button class="btn btn-link" style="margin:0; padding:0">{{ $t("TRANSPONDER_SETTINGS") }}</button>
+        </div>
     </div>
 </template>
 <script>
