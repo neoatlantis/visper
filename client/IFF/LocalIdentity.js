@@ -1,4 +1,5 @@
 import LocalIdentityEphermalCert from "./LocalIdentityEphermalCert";
+import * as openpgp from "openpgp";
 import nacl from "tweetnacl";
 const buffer = require("buffer");
 const _ = require("lodash");
@@ -14,6 +15,20 @@ class Identity extends events.EventEmitter{
 
     constructor(){
         super();
+    }
+
+    async export_secret(password){
+        // export password protected identity file
+        let payload = msgpack.encode({
+            "visper-secret-key": this.#secret_key,
+        });
+        const encrypted = await openpgp.encrypt({
+            message: await openpgp.createMessage({ binary: payload }),
+            passwords: [password],
+            format: 'armored',
+        });
+
+        this.emit("secret-export", encrypted);
     }
 
     generate(){

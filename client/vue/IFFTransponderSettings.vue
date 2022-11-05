@@ -1,0 +1,113 @@
+<i18n>{
+
+    zh: {
+        TITLE: "应答机设定",
+        DESC_TRANSPONDER_1: "应答机帮助您向对方证明自己的身份。为此，您需要在应答机中加载一个身份密钥。只要保管这一密钥，就可以让您的好友在未来的其他聊天中也会认出您的身份。",
+        DESC_TRANSPONDER_2: "如果您没有自己的身份密钥，现在可以下载应答机中临时随机生成的密钥。您必须为这一密钥设定一个密码。",
+        DESC_TRANSPONDER_3: "或者，您可以上传已有的密钥。",
+        CHOOSE_ENCRYPTING_PASSWORD: "输入一个密码，保护身份密钥:",
+        TYPE_INSTRUCTION: "至少6位",
+        TYPE_AGAIN: "输入第二次以确认",
+        DOWNLOAD: "下载",
+        PASTE_HERE: "请将密钥粘贴到此处:",
+    },
+
+    en: {
+        TITLE: "Transponder Settings",
+        DESC_TRANSPONDER_1: "Transponder will help you proving your identity to friends. To start, you will have an identity key loaded onto transponder. Your friend could identify you in the future, as long as you load the transponder with same identity key.",
+        DESC_TRANSPONDER_2: "If you don't have your identity key yet, currently a random key is generated for you. You can download it below. A password must be set for your identity key export.",
+        DESC_TRANSPONDER_3: "Otherwise, you can upload this key now.",
+        CHOOSE_ENCRYPTING_PASSWORD: "Choose a password to protect your identity key:",
+        TYPE_INSTRUCTION: "At least 6 chars",
+        TYPE_AGAIN: "Type again to confirm",
+        DOWNLOAD: "Download",
+        PASTE_HERE: "Paste your previously saved key here:"
+    }
+
+}</i18n>
+<template>
+<DialogBox ref="transponder-settings">
+    <template #title>{{ $t("TITLE") }}</template>
+    <p>{{ $t("DESC_TRANSPONDER_1") }}</p>
+    <hr />
+
+    <p>{{ $t("DESC_TRANSPONDER_2" )}}</p>
+
+    <form class="form" @submit="$event.preventDefault();">
+        <div class="form-group">
+            <label>{{ $t("CHOOSE_ENCRYPTING_PASSWORD") }}</label>
+            <div class="row">
+                <div class="col"><input class="form-control" type="password" v-model="download_password1"/></div>
+                <div class="col"><input class="form-control" type="password" v-model="download_password2" :placeholder="$t('TYPE_AGAIN')"/></div>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit" :disabled="!download_valid" @click="export_secret">{{$t("DOWNLOAD")}}</button>
+    </form>
+
+    <hr />
+    <p>{{ $t("DESC_TRANSPONDER_3") }}</p>
+
+    <form class="form" @submit="$event.preventDefault();">
+
+        <div class="form-group">
+            <label for="iff-transponder-upload-key-textarea">{{$t('PASTE_HERE')}}</label>
+            <textarea class="form-control" id="iff-transponder-upload-key-textarea" rows="4"></textarea>
+        </div>
+
+    </form>
+
+</DialogBox>
+</template>
+<script>
+import DialogBox from "./DialogBox.vue";
+import local_identity from "app/IFF/LocalIdentity";
+import download_text from "app/lib/download_text"
+
+export default {
+
+    mounted(){
+        local_identity.on("secret-export", (data)=>{
+            this.exporting_secret = false;
+            download_text("visper-identity-key.asc", data);
+        });
+    },
+
+    data(){ return {
+        exporting_secret: false,
+        download_password1: "",
+        download_password2: "",
+        /// #if DEV
+        download_password1: "testtest",
+        download_password2: "testtest",
+        /// #endif
+
+    } },
+
+    components: {
+        DialogBox,
+    },
+
+    methods: {
+        show(){
+            this.$refs["transponder-settings"].show();
+        },
+
+        export_secret(){
+            this.exporting_secret = true;
+            local_identity.export_secret(this.download_password1);
+        }
+    },
+
+    computed: {
+        download_valid(){
+            return (
+                !this.exporting_secret &&
+                this.download_password1 == this.download_password2 &&
+                this.download_password1.length >= 6
+            );
+        }
+    }
+
+}
+
+</script>

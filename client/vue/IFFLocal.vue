@@ -3,7 +3,7 @@
         TRANSMISSION: "TX",
         RECEPTION: "RX",
         INTERFERENCE: "Interference",
-        TRANSPONDER_SETTINGS: "Transponder Settings...",
+        TRANSPONDER_SETTINGS: "TPDR Settings...",
     },
 
     zh: {
@@ -35,14 +35,19 @@
         &nbsp;
         <StatusLED ref="led_if" color="yellow" v-tooltip="'Someone in this channel did not get the correct password.'">{{ $t("INTERFERENCE") }}</StatusLED>
         <div class="float-right">
-            <button class="btn btn-link" style="margin:0; padding:0">{{ $t("TRANSPONDER_SETTINGS") }}</button>
+            <button class="btn btn-link" style="margin:0; padding:0" @click="show_transponder_settings">{{ $t("TRANSPONDER_SETTINGS") }}</button>
         </div>
     </div>
+
+    <IFFTransponderSettings ref="transponder-settings-dialog"></IFFTransponderSettings>
 </template>
 <script>
-import StatusLED           from "sfc/StatusLED.vue";
-import IdentityFingerprint from "sfc/IdentityFingerprint.vue";
-import IFF from "app/IFF";
+import StatusLED                from "sfc/StatusLED.vue";
+import IdentityFingerprint      from "sfc/IdentityFingerprint.vue";
+import IFFTransponderSettings   from "sfc/IFFTransponderSettings.vue";
+
+import IFF                      from "app/IFF";
+
 
 export default {
 
@@ -68,9 +73,16 @@ export default {
         },
     },
 
+    methods: {
+        show_transponder_settings(){
+            this.$refs["transponder-settings-dialog"].show();
+        }
+    },
+
     components: {
         IdentityFingerprint,
         StatusLED,
+        IFFTransponderSettings,
     }
 }
 </script>
