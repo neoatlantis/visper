@@ -34,7 +34,7 @@ class ForeignEphermalKeys {
         // Check: user id matches IFF's identification
         const user_id = _.first(new_key.getUserIDs());
         if(!_.startsWith(user_id, identity.slice(0, 32))){
-            console.error("Received invalid ephermal key: user id invalid.");
+            console.error("Received invalid ephermal key: user id invalid. Received: " + user_id + " Expected:" + identity.slice(0,32));
             return;
         }
 

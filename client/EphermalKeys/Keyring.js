@@ -68,6 +68,10 @@ class KeyStack {
         return _.size(this.#keys);
     }
 
+    empty(){
+        _.remove(this.#keys);
+    }
+
 }
 
 
@@ -162,6 +166,9 @@ class Keyring {
         return this.#private_keys.latest();
     }
 
+    empty_private_keys(){
+        this.#private_keys.empty();
+    }
 
 }
 

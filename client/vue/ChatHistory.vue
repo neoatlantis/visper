@@ -30,6 +30,7 @@ export default {
     mounted(){
 
         ChatHistory.on("message", (e)=>{
+            console.log("chathistory/add", e);
             this.list.push(e)
             setTimeout(()=>this.scroll_to_bottom(), 1);
         });

@@ -12,7 +12,13 @@ const key_period = constants.EPHERMAL_KEY_ROTATION_PERIOD * 1000;
 
 class LocalEphermalKeys {
 
-    constructor(){}
+    constructor(){
+        setTimeout(()=>{
+            LocalIdentity.on("created", ()=>{
+                this.#drop_old_local_identity();
+            })
+        }, 1);
+    }
 
     current_period(){
         return Math.floor(new Date().getTime() / key_period);
@@ -36,6 +42,10 @@ class LocalEphermalKeys {
 
         let { publicKey, privateKey } = await this.#create_key(starttime);
         return privateKey;
+    }
+
+    async #drop_old_local_identity(){
+        Keyring.empty_private_keys();
     }
 
     async #create_key(starttime){

@@ -3,6 +3,7 @@ import IFF from "app/IFF";
 import LocalIdentity from "app/IFF/LocalIdentity";
 import session from "app/session";
 import chat_history from "app/ChatHistory";
+import { v4 as uuidv4 } from "uuid";
 
 const events = require("events");
 
@@ -42,7 +43,11 @@ class MessagingSender extends events.EventEmitter {
     }
 
     async text({ text }){
-        return await this.#broadcast_chat({ type: "text", text });
+        return await this.#broadcast_chat({
+            type: "text",
+            text,
+            uuid: uuidv4(),
+        });
     }
 
 }
