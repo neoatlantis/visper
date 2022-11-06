@@ -13,6 +13,7 @@
         PASTE_HERE: "或者将密钥粘贴到此处:",
         TYPE_DECRYPTING_PASSWORD: "请输入密码解密:",
         UPLOAD: "上传",
+        UPLOAD_ERORR: "上传失败，请检查密钥文件和解密密码。",
     },
 
     en: {
@@ -28,6 +29,7 @@
         PASTE_HERE: "Or paste your key here:",
         TYPE_DECRYPTING_PASSWORD: "Input password to decrypt:",
         UPLOAD: "Upload",
+        UPLOAD_ERORR: "Upload failed, check key file and password.",
     }
 
 }</i18n>
@@ -80,6 +82,7 @@
         </div>
 
         <button class="btn btn-primary" type="submit" :disabled="!upload_valid" @click="import_secret">{{$t("UPLOAD")}}</button>
+        <span style="color:red" v-if="upload_error">&nbsp;&nbsp;{{ $t("UPLOAD_ERORR") }}</span>
     </form>
 
 </DialogBox>
@@ -111,6 +114,7 @@ export default {
 
         upload_text: "",
         upload_password: "",
+        upload_error: false,
     } },
 
     components: {
@@ -125,6 +129,7 @@ export default {
         export_secret(){
             this.exporting_secret = true;
             local_identity.export_secret(this.download_password1);
+            this.download_password1 = this.download_password2 = "";
         },
 
         async on_file_upload(e){
@@ -132,8 +137,20 @@ export default {
             this.upload_text = text;
         },
 
-        import_secret(){
-
+        async import_secret(){
+            let result = await local_identity.import_secret(
+                this.upload_text,
+                this.upload_password
+            );
+            if(!result){
+                // failure
+                this.upload_error = true;
+            } else {
+                // success
+                this.upload_error = false;
+                this.upload_text = this.upload_password = "";
+                this.$refs["transponder-settings"].hide();
+            }
         },
     },
 

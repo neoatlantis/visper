@@ -31,12 +31,41 @@ class Identity extends events.EventEmitter{
         this.emit("secret-export", encrypted);
     }
 
+    async import_secret(encrypted_armored, password){
+        let decrypted = null;
+        try{
+            let encrypted_message =
+                await openpgp.readMessage({ armoredMessage: encrypted_armored});
+            decrypted = await openpgp.decrypt({
+                message: encrypted_message,
+                passwords: [password],
+                format: 'binary',
+            });
+        } catch(e){
+            return false;
+        }
+        let payload = msgpack.decode(decrypted.data);
+        if(!_.isTypedArray(_.get(payload, "visper-secret-key"))){
+            return false;
+        }
+        try{
+            this.#load_keypair(
+                nacl.sign.keyPair.fromSecretKey(payload["visper-secret-key"]));
+        } catch(e){
+            return false;
+        }
+        return true;
+    }
+
     generate(){
-        const { publicKey, secretKey } = nacl.sign.keyPair();
+        this.#load_keypair(nacl.sign.keyPair());
+    }
+
+    #load_keypair(keypair){
+        const { publicKey, secretKey } = keypair;
         this.#secret_key = secretKey;
         this.#public_key = publicKey;
         this.#ephermal_cert = new LocalIdentityEphermalCert();
-
         this.emit("created");
     }
 
