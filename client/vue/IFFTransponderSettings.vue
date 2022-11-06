@@ -9,7 +9,10 @@
         TYPE_INSTRUCTION: "至少6位",
         TYPE_AGAIN: "输入第二次以确认",
         DOWNLOAD: "下载",
-        PASTE_HERE: "请将密钥粘贴到此处:",
+        UPLOAD_FILE: "请上传文件:",
+        PASTE_HERE: "或者将密钥粘贴到此处:",
+        TYPE_DECRYPTING_PASSWORD: "请输入密码解密:",
+        UPLOAD: "上传",
     },
 
     en: {
@@ -21,7 +24,10 @@
         TYPE_INSTRUCTION: "At least 6 chars",
         TYPE_AGAIN: "Type again to confirm",
         DOWNLOAD: "Download",
-        PASTE_HERE: "Paste your previously saved key here:"
+        UPLOAD_FILE: "Please upload the key:",
+        PASTE_HERE: "Or paste your key here:",
+        TYPE_DECRYPTING_PASSWORD: "Input password to decrypt:",
+        UPLOAD: "Upload",
     }
 
 }</i18n>
@@ -49,11 +55,31 @@
 
     <form class="form" @submit="$event.preventDefault();">
 
-        <div class="form-group">
-            <label for="iff-transponder-upload-key-textarea">{{$t('PASTE_HERE')}}</label>
-            <textarea class="form-control" id="iff-transponder-upload-key-textarea" rows="4"></textarea>
+        <div class="form-group row">
+            <label class="col-sm-4" for="iff-transponder-upload-file-select">{{$t("UPLOAD_FILE")}}</label>
+            <div class="col-sm-8">
+                <input
+                    type="file" class="form-control-file"
+                    id="iff-transponder-upload-file-select"
+                    accept=".asc"
+                    @change="on_file_upload"
+                />
+            </div>
         </div>
 
+        <div class="form-group">
+            <label for="iff-transponder-upload-key-textarea">{{$t('PASTE_HERE')}}</label>
+            <textarea class="form-control" style="font-family:monospace" id="iff-transponder-upload-key-textarea" rows="4" v-model="upload_text"></textarea>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-4">{{$t("TYPE_DECRYPTING_PASSWORD")}}</label>
+            <div class="col-sm-8">
+                <input type="password" class="form-control" v-model="upload_password"/>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" :disabled="!upload_valid" @click="import_secret">{{$t("UPLOAD")}}</button>
     </form>
 
 </DialogBox>
@@ -62,6 +88,8 @@
 import DialogBox from "./DialogBox.vue";
 import local_identity from "app/IFF/LocalIdentity";
 import download_text from "app/lib/download_text"
+import read_upload_file_text from "app/lib/read_upload_file_text";
+
 
 export default {
 
@@ -81,6 +109,8 @@ export default {
         download_password2: "testtest",
         /// #endif
 
+        upload_text: "",
+        upload_password: "",
     } },
 
     components: {
@@ -95,7 +125,16 @@ export default {
         export_secret(){
             this.exporting_secret = true;
             local_identity.export_secret(this.download_password1);
-        }
+        },
+
+        async on_file_upload(e){
+            let text = await read_upload_file_text(e.target);
+            this.upload_text = text;
+        },
+
+        import_secret(){
+
+        },
     },
 
     computed: {
@@ -105,6 +144,13 @@ export default {
                 this.download_password1 == this.download_password2 &&
                 this.download_password1.length >= 6
             );
+        },
+
+        upload_valid(){
+            return (
+                this.upload_password != "" &&
+                this.upload_text != ""
+            )
         }
     }
 
